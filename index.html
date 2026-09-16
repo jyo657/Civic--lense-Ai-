@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CivicLens AI — Civic Action App</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--blue:#1769ff;--teal:#16b89f;--navy:#102f52;--bg:#f4f8fc;--text:#17375e;--muted:#71869b}
+body{font-family:Inter,Segoe UI,Arial,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+button{font:inherit;cursor:pointer;border:0}a{text-decoration:none;color:inherit}
+.app{min-height:100vh;display:flex}
+.sidebar{width:245px;background:#fff;border-right:1px solid #e2ebf4;padding:22px 15px;position:fixed;left:0;top:0;bottom:0;z-index:20}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 10px 25px;font-weight:800;font-size:19px}.brand small{display:block;color:var(--muted);font-size:8px;font-weight:600}
+.pin{width:37px;height:37px;border-radius:50% 50% 50% 8px;background:linear-gradient(135deg,var(--teal),var(--blue));color:#fff;display:grid;place-items:center;font-size:20px;transform:rotate(-45deg)}.pin span{transform:rotate(45deg)}
+.navitem{width:100%;padding:12px 14px;border-radius:11px;background:none;text-align:left;color:#637b92;margin:3px 0;font-weight:600}.navitem:hover,.navitem.active{background:#eaf3ff;color:var(--blue)}
+.bottomnav{position:absolute;bottom:20px;left:15px;right:15px}
+.main{margin-left:245px;width:calc(100% - 245px);padding-bottom:40px}
+.topbar{height:72px;background:#fff;border-bottom:1px solid #e2ebf4;display:flex;align-items:center;justify-content:space-between;padding:0 4%}
+.user{display:flex;align-items:center;gap:10px;font-size:13px}.avatar{width:37px;height:37px;border-radius:50%;background:#dcecff;display:grid;place-items:center;font-weight:800;color:var(--blue)}
+.page{display:none;padding:32px 4%;animation:fade .2s}.page.active{display:block}@keyframes fade{from{opacity:.3;transform:translateY(4px)}to{opacity:1;transform:none}}
+h1{font-size:32px}h2{font-size:23px}h3{font-size:15px}.muted{color:var(--muted)}.head{margin-bottom:25px}.head p{margin-top:6px;color:var(--muted)}
+.card{background:#fff;border:1px solid #e0eaf3;border-radius:17px;padding:22px;box-shadow:0 7px 24px #12345b09}
+.hero{background:linear-gradient(120deg,#e9f7ff,#fff);border-radius:22px;padding:42px;display:flex;justify-content:space-between;overflow:hidden}.hero h1{font-size:46px;line-height:1.06}.hero h1 span{color:var(--blue)}.hero p{max-width:650px;color:#5d748c;margin:15px 0;font-size:15px}
+.btn{padding:12px 18px;border-radius:10px;font-weight:750}.primary{background:var(--blue);color:#fff}.outline{background:#fff;color:var(--blue);border:1px solid #bcd2eb}.hero-actions{display:flex;gap:10px;margin-top:20px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin:20px 0}.metric{background:#fff;border:1px solid #e0eaf3;border-radius:15px;padding:19px}.metric strong{font-size:27px;display:block}.metric span{font-size:11px;color:var(--muted)}
+.iconcard{background:#fff;border:1px solid #e0eaf3;border-radius:15px;padding:20px}.ico{font-size:28px;margin-bottom:12px}.iconcard p{font-size:12px;color:var(--muted);margin-top:5px}
+label{font-size:12px;font-weight:700;display:block;margin:15px 0 6px}input,textarea,select{width:100%;padding:12px;border:1px solid #ccdbea;border-radius:10px;background:#fbfdff;font:inherit}textarea{min-height:90px}.upload{border:2px dashed #b9cfe8;border-radius:14px;padding:30px;text-align:center;color:var(--muted)}
+.result{margin-top:18px;background:#effaf5;border:1px solid #c5eadb;border-radius:13px;padding:17px;display:none}.result b{color:#108e6e}.pill{padding:5px 9px;border-radius:20px;font-size:10px;font-weight:800}.critical{background:#ffe1e1;color:#d63636}.high{background:#fff0d4;color:#c47700}.medium{background:#fff7ca;color:#897100}.resolved{background:#def7e9;color:#138b59}
+table{width:100%;border-collapse:collapse;font-size:12px}th,td{padding:12px 6px;border-bottom:1px solid #edf2f6;text-align:left}th{font-size:10px;color:#71869b;text-transform:uppercase}
+.map{height:280px;border-radius:14px;background:linear-gradient(145deg,#dfeeda,#c9e7ef);position:relative}.map:after{content:"VISAKHAPATNAM";position:absolute;left:35%;top:48%;font-weight:800;color:#68838a}.dot{position:absolute;width:14px;height:14px;border-radius:50%;background:#ef4444;box-shadow:0 0 0 6px #ef444422}.d1{left:18%;top:25%}.d2{left:55%;top:20%;background:#ff9c20}.d3{left:73%;top:65%;background:#13a879}.d4{left:39%;top:73%;background:#ff9c20}
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:15px}.photo{height:230px;border-radius:14px;background:linear-gradient(135deg,#d6e3ec,#aebfce);display:grid;place-items:center;font-size:50px;margin-top:10px}
+.progress{height:9px;background:#e8eef4;border-radius:20px;overflow:hidden;margin:10px 0}.progress i{display:block;width:82%;height:100%;background:linear-gradient(90deg,var(--teal),var(--blue))}
+.toast{position:fixed;right:25px;bottom:25px;background:#12345b;color:#fff;padding:14px 18px;border-radius:12px;display:none;z-index:50}
+@media(max-width:850px){.sidebar{width:70px;padding:15px 8px}.brand div:last-child,.navitem span,.bottomnav{display:none}.navitem{text-align:center;font-size:19px}.main{margin-left:70px;width:calc(100% - 70px)}.grid,.grid2{grid-template-columns:1fr 1fr}.metrics{grid-template-columns:1fr 1fr}.hero{padding:30px}.hero h1{font-size:38px}}
+@media(max-width:560px){.grid,.grid2,.compare{grid-template-columns:1fr}.hero h1{font-size:31px}.hero{padding:25px}.metrics{grid-template-columns:1fr 1fr}.topbar{padding:0 18px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+<div class="brand"><div class="pin"><span>⌖</span></div><div>CivicLens AI<small>Smarter Cities. Happier Citizens.</small></div></div>
+<button class="navitem active" data-page="home">🏠 <span>Home</span></button>
+<button class="navitem" data-page="report">📷 <span>Report Problem</span></button>
+<button class="navitem" data-page="analysis">🧠 <span>AI Analysis</span></button>
+<button class="navitem" data-page="dashboard">📊 <span>Dashboard</span></button>
+<button class="navitem" data-page="verify">🛡️ <span>Verification</span></button>
+<button class="navitem" data-page="about">ℹ️ <span>About</span></button>
+<div class="bottomnav"><button class="navitem" data-page="contact">✉️ <span>Contact</span></button></div>
+</aside>
+
+<main class="main">
+<header class="topbar"><strong id="title">CivicLens AI</strong><div class="user"><span>Citizen Portal</span><div class="avatar">C</div></div></header>
+
+<section id="home" class="page active">
+<div class="hero"><div><span class="pill resolved">✦ AI-POWERED CIVIC ACTION</span><h1 style="margin-top:15px">See the problem.<br><span>Let AI take it forward.</span></h1><p>Report civic problems, get instant AI analysis, smart priority and department routing — all in one place.</p><div class="hero-actions"><button class="btn primary" onclick="showPage('report')">📷 Report a Problem</button><button class="btn outline" onclick="showPage('dashboard')">📍 Track Complaint</button></div></div></div>
+<div style="margin-top:22px" class="grid">
+<div class="iconcard"><div class="ico">🧠</div><h3>AI Detection</h3><p>Understand civic issues from photos.</p></div><div class="iconcard"><div class="ico">🚨</div><h3>Smart Priority</h3><p>Calculate severity and public impact.</p></div><div class="iconcard"><div class="ico">🛡️</div><h3>Resolution Verification</h3><p>Check before and after images.</p></div>
+</div></section>
+
+<section id="report" class="page">
+<div class="head"><h1>Report a Problem</h1><p>Upload evidence and give us the location. AI handles the next step.</p></div>
+<div class="grid2"><div class="card"><h2>Citizen Report</h2><label>Photo / Evidence</label><div class="upload"><input id="file" type="file" accept="image/*"><p style="margin-top:8px">Choose a clear photo</p></div><label>Category</label><select id="cat"><option>Pothole / Damaged Road</option><option>Garbage / Waste</option><option>Streetlight</option><option>Water Leakage</option><option>Fallen Tree</option><option>Other</option></select><label>Location</label><input id="loc" placeholder="Example: MVP Colony, Visakhapatnam"><label>Description</label><textarea placeholder="Describe the problem briefly"></textarea><button class="btn primary" style="width:100%;margin-top:18px" onclick="createReport()">Analyze Report →</button></div>
+<div class="card"><h2>What CivicLens does</h2><div style="margin-top:18px;line-height:2.3"><p>📷 <b>1. Capture</b> — receive visual evidence</p><p>🧠 <b>2. Understand</b> — detect issue type</p><p>📈 <b>3. Score</b> — estimate severity</p><p>🏢 <b>4. Route</b> — recommend department</p><p>🚨 <b>5. Prioritize</b> — generate action level</p></div><div id="created" class="result"><b>✓ Complaint created: CL-2026-1048</b><br>Your AI assessment is ready.</div></div></div></section>
+
+<section id="analysis" class="page">
+<div class="head"><h1>AI Analysis</h1><p>Visual intelligence converts your complaint into an action plan.</p></div>
+<div class="grid2"><div class="card"><h2>Evidence</h2><div class="photo">🕳️</div><p class="muted" style="margin-top:8px">Demo image • Complaint CL-2026-1048</p></div>
+<div class="card"><h2>AI Assessment</h2><label>Detected Issue</label><h3 id="aiIssue">Pothole / Damaged Road</h3><label>Severity</label><h3>9.2 / 10 <span class="pill critical">CRITICAL</span></h3><label>Public Impact</label><h3>Very High</h3><label>Department</label><h3>Road Maintenance</h3><label>Priority</label><h3>Critical — action within 24h</h3><button class="btn primary" style="margin-top:20px" onclick="toast('Action plan sent to Road Maintenance (demo).')">Create Action Plan</button></div></div>
+<div class="card" style="margin-top:20px"><h2>AI Recommendation</h2><div class="result" style="display:block"><b>High-confidence action recommended.</b><br>Inspect the road segment, provide temporary warning if needed, repair the damaged section, and upload an after-repair image for verification.</div></div></section>
+
+<section id="dashboard" class="page">
+<div class="head"><h1>Authority Dashboard</h1><p>One screen to monitor civic complaints and city-level insights.</p></div>
+<div class="metrics"><div class="metric"><strong>1,248</strong><span>Total Complaints</span></div><div class="metric"><strong>482</strong><span>Critical</span></div><div class="metric"><strong>356</strong><span>High</span></div><div class="metric"><strong>612</strong><span>Resolved</span></div></div>
+<div class="grid2"><div class="card"><h2>Recent Complaints</h2><table><tr><th>Issue</th><th>Location</th><th>Priority</th><th>Status</th></tr><tr><td>Pothole</td><td>MG Road</td><td><span class="pill critical">Critical</span></td><td>In Progress</td></tr><tr><td>Garbage</td><td>Beach Road</td><td><span class="pill high">High</span></td><td>Assigned</td></tr><tr><td>Streetlight</td><td>Railway Station</td><td><span class="pill medium">Medium</span></td><td>Pending</td></tr><tr><td>Water Leak</td><td>Dwaraka Nagar</td><td><span class="pill high">High</span></td><td>In Progress</td></tr><tr><td>Fallen Tree</td><td>Pendurthi</td><td><span class="pill medium">Medium</span></td><td>Resolved</td></tr></table></div>
+<div class="card"><h2>Civic Issue Hotspots</h2><div class="map"><i class="dot d1"></i><i class="dot d2"></i><i class="dot d3"></i><i class="dot d4"></i></div><p class="muted" style="font-size:11px;margin-top:8px">Demo GIS view — connect live map data later.</p></div></div></section>
+
+<section id="verify" class="page">
+<div class="head"><h1>Resolution Verification</h1><p>AI compares before and after evidence to prevent false closure.</p></div>
+<div class="card"><div class="alert" style="padding:13px;background:#eef7ff;border-radius:10px"><b>CL-2026-1048</b> • Pothole • MG Road</div><div class="compare" style="margin-top:20px"><div><h3>Before Repair</h3><div class="photo">🕳️</div></div><div><h3>After Repair</h3><div class="photo">🛣️</div></div></div><div style="margin-top:22px"><b>AI visual improvement confidence: 82%</b><div class="progress"><i></i></div></div><div id="verifyResult" class="result" style="display:block;margin-top:20px"><b>✓ Resolution Verified</b><br>AI found substantial visual change consistent with repair.</div><button class="btn primary" style="margin-top:16px" onclick="toggleVerification()">Simulate Issue Still Present</button></div></section>
+
+<section id="about" class="page"><div class="head"><h1>About CivicLens AI</h1><p>Not just a complaint form — an AI intelligence layer for civic action.</p></div><div class="card"><h2>Our Mission</h2><p class="muted" style="margin-top:10px">CivicLens transforms a citizen's photo into a prioritized civic action and checks whether the problem was actually solved. The goal is faster response, smarter resource allocation and more accountable resolution.</p></div><div class="grid" style="margin-top:20px"><div class="iconcard"><div class="ico">👁️</div><h3>Detect</h3><p>Understand visible civic issues.</p></div><div class="iconcard"><div class="ico">⚡</div><h3>Act</h3><p>Prioritize based on severity and impact.</p></div><div class="iconcard"><div class="ico">✓</div><h3>Verify</h3><p>Confirm that the issue is truly resolved.</p></div></div></section>
+
+<section id="contact" class="page"><div class="head"><h1>Contact</h1><p>Questions, suggestions or collaboration?</p></div><div class="grid2"><div class="card"><label>Name</label><input placeholder="Your name"><label>Email</label><input placeholder="you@example.com"><label>Message</label><textarea placeholder="Your message"></textarea><button class="btn primary" style="margin-top:17px" onclick="toast('Message submitted — demo only.')">Send Message</button></div><div class="card"><h2>Hackathon Demo</h2><p class="muted" style="margin-top:10px">CivicLens AI is a prototype. Dashboard numbers and AI results shown here are demo data until connected to a real backend and model.</p></div></div></section>
+</main></div>
+<div class="toast" id="toast"></div>
+<script>
+const pages=document.querySelectorAll('.page'), navs=document.querySelectorAll('.navitem');
+function showPage(id){pages.forEach(p=>p.classList.toggle('active',p.id===id));navs.forEach(n=>n.classList.toggle('active',n.dataset.page===id));document.getElementById('title').textContent=id==='home'?'CivicLens AI':id.replace(/^\w/,c=>c.toUpperCase()).replace('verify','Verification') ;window.scrollTo({top:0,behavior:'smooth'})}
+navs.forEach(n=>n.onclick=()=>showPage(n.dataset.page));
+function createReport(){if(!document.getElementById('file').files[0]){alert('Please upload a photo first.');return}document.getElementById('created').style.display='block';document.getElementById('aiIssue').textContent=document.getElementById('cat').value;showPage('analysis')}
+function toggleVerification(){let x=document.getElementById('verifyResult');x.className='result';x.style.display='block';x.innerHTML='<b style="color:#d63636">⚠ Resolution Rejected</b><br>The original issue may still be present. Complaint should be reopened.'}
+function toast(msg){let t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',2500)}
+</script>
+</body>
+</html>
